@@ -172,7 +172,10 @@ written on the side of the rack.
 The small LED in the upper left corner of the node gives its general status. If
 the LED is green, the node is available to run jobs. If it is yellow, the node
 is alive but disable in Slurm (*drained* or *draining*). Finally, if the LED is
-red, the node is down according to Slurm.
+red, the node is down according to Slurm. The node state may be combined by more
+than one state. The LED will reflect the most representative state, which is 
+of ranking: down > drain > maint > reserved > all the others. Therefore, if a
+node is drain and down, then its LED color will be red.
 
 Then, the color of node rectangle depends upon current job allocations. If all
 the cores of the node are allocated, the color is dark blue. If only a subset

@@ -52,38 +52,33 @@ define([
       }
 
       switch (node.state) {
-      case 'IDLE':
-      case 'IDLE*':
+        //node state that matches IDLE or IDLE*
+      case (node.state.match(/^IDLE\*?[^\+]*$/) || {}).input:
         stateColor = colors.LED.AVAILABLE;
         nodeColor = colors.LED.IDLE;
         break;
-      case 'ALLOCATED':
-      case 'ALLOCATED*':
-      case 'MIXED':
-      case 'MIXED*':
-      case 'COMPLETING':
-      case 'COMPLETING*':
+        //node state that matches ALLOCATED(*) or MIXED(*) or COMPLETING(*)
+      case (node.state.match(/^ALLOCATED\*?[^\+]*$|^MIXED\*?[^\+]*$|^COMPLETING\*?[^\+]*$/) || {}).input:
         nodeColor = allocatedColor;
         stateColor = colors.LED.AVAILABLE;
         break;
-      case 'RESERVED':
+        //node state RESERVED(*) or any other state than DOWN, DRAIN, MAINT combining with RESERVED(*)
+      case (node.state.match(/^RESERVED\*?[^\+]*|^[^DM][A-Z\*]{3,}\+RESERVED\*?[^\+]*$/) || {}).input:
         nodeColor = allocatedColor;
         stateColor = colors.LED.RESERVED;
         break;
-      case 'DRAINING':
-      case 'DRAINING*':
-      case 'DRAINED':
-      case 'DRAINED*':
+        //node state that matches DRAIN(*), DRAINED(*), DRAINING(*), another state (except DOWN) + DRAINING
+      case (node.state.match(/^DRAIN[A-Z]{0,3}\*?\+?[A-Z]*|^[^D][A-Z\*]{3,}\+DRAIN[A-Z]{0,3}\*?[^\+]*$/) || {}).input:
         stateColor = colors.LED.DRAINED;
         nodeColor = colors.LED.UNAVAILABLE;
         break;
-      case 'DOWN':
-      case 'DOWN*':
+        //node state that has a DOWN in it
+      case (node.state.match(/DOWN\*?/) || {}).input:
         stateColor = colors.LED.DOWN;
         nodeColor = colors.LED.UNAVAILABLE;
         break;
-      case 'MAINT':
-      case 'MAINT*':
+        //node state that matches MAINT(*), or any other state than DOWN, DRAIN combining with MAINT
+      case (node.state.match(/^MAINT\*?\+?[A-Z]*|^[^D][A-Z\*]{3,}\+MAINT\*?[^\+]*$/) || {}).input:
         stateColor = colors.LED.MAINT;
         nodeColor = colors.LED.UNAVAILABLE;
         break;
