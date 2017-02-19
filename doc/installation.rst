@@ -295,6 +295,28 @@ users, then Slurm-Web won't show them. Using a user with enough
 credentials will fix the problem. Usually, setting the user to ``slurm``
 (see *slurm.conf*) is enough.
 
+Virtualhost settings of clusters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Slurm-web dashboard is using apache mod_wsgi. Since REST API requires headers
+information. It will be necessary to turn the WSGIPassAuthorization``
+directive to ``On`` in virtualhost configuration. The configuration file can
+be found in ``/etc/apache2/sites-available/default-ssl.conf`` of your clusters.
+
+Here is an example of a virtualhost configuration file:
+
+.. code-block:: bash
+  <IfModule mod_ssl.c>
+    <VirtualHost *:443>
+      
+      ServerAdmin webmaster@localhost
+      WSGIPassAuthorization On
+      DocumentRoot /var/www/html
+                  :
+                  :
+
+    </VirtualHost>
+  </IfModule>
 
 REST API configuration
 ^^^^^^^^^^^^^^^^^^^^^^
