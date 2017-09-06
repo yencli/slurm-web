@@ -55,6 +55,8 @@ define([
             callback(null, null);
           })
           .error(function(error) {
+            cluster.disabled = true;
+            $('#' + cluster.id).addClass('disabled');
             return callback(true, error);
           });
       };

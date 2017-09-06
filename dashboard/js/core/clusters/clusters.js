@@ -47,6 +47,7 @@ define([
         cluster.infos = response.data;
         cluster.name = response.data.name;
         cluster.authentication = response.authentication;
+        cluster.disabled = false;
         callback(null, null);
       })
       .error(function(error) {
@@ -66,7 +67,7 @@ define([
         e.stopPropagation();
 
         // abort if the selected cluster is yet the current one
-        if (config.cluster === clusters[$(this).data('id')] || lock) {
+        if (config.cluster === clusters[$(this).data('id')] || lock || clusters[$(this).data('id')].disabled) {
           return false;
         }
 
