@@ -881,3 +881,66 @@ an empty array :
 .. code-block:: js
 
   []
+
+Alternative ways to interact with REST API
+""""""""""""""""""""""""""""""""""""""""""
+
+There are several ways to check REST API endpoints. You may use tools like
+cURL or the requests module of python to connect to REST API via command line.
+
+Here is an exemple of python script to test with.
+
+.. code-block:: python
+
+     #!/usr/bin/env python
+
+    import requests
+    import getpass
+    import json
+
+    # session must be used if there's network restriction
+    session = requests.Session()
+    session.trust_env = False
+
+				# Replace localhost:cluster by URL:port
+    baseUrl = "http://localhost:cluster"
+
+    versionUrl = baseUrl + "/version"
+    print versionUrl
+    versionResponse = session.get(versionUrl)
+    print versionResponse
+    if versionResponse.ok:
+        print versionResponse.content
+    else:
+        versionResponse.raise_for_status()
+
+    loginUrl = baseUrl + "/login"
+    login = raw_input("username: ")
+    if login != 'guest':
+        pswd = getpass.getpass('Password:')
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+    if login == 'guest':
+        loginResponse = session.post(
+            loginUrl, headers=headers, json={'guest': True})
+    else:
+        loginResponse = session.post(loginUrl, headers=headers, json={
+                                     'login': login, 'password': pswd})
+
+    if loginResponse.ok:
+        print loginResponse.content
+        userInfos = json.loads(loginResponse.content)
+        authHeader = "Bearer " + userInfos['id_token']
+        headers = {'Accept': 'application/json',
+                   'Content-Type': 'application/json', 'Authorization': authHeader}
+        jobsUrl = baseUrl + "/jobs"
+        jobsResponse = session.get(jobsUrl, headers=headers)
+
+        if jobsResponse.ok:
+            print jobsResponse.content
+        else:
+            jobsResponse.raise_for_status()
+    else:
+        # If response code is not ok, print the resulting http error code with
+        # description
+        loginResponse.raise_for_status()
