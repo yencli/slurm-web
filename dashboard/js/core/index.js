@@ -146,6 +146,15 @@ require([
     return this.charAt(0).toUpperCase() + this.slice(1);
   }
 
+  var $loader = $('#loader').hide();
+
+  $(document).ajaxStart(function(){
+    $loader.show();
+  })
+  .ajaxStop(function(){
+    $loader.hide();
+  });
+
   $(document).on('loadPage', function(e, options) {
 
     e.stopPropagation();
